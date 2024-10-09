@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="CorpChat.FindPage"
+             BackgroundColor="Black">
+    <ContentPage.Content>
+        <StackLayout>
+            <Frame BackgroundColor="Black" CornerRadius="20" BorderColor="#AFEEEE" Margin="0,-20,0,0">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <ImageButton x:Name="Return_Button_on_Find" Source="strela.png" BackgroundColor="#00000000" Clicked="Return_Button_on_Find_Clicked"  Grid.Column="0" Grid.Row="0" HorizontalOptions="StartAndExpand" VerticalOptions="CenterAndExpand" ></ImageButton>
+                    <Label x:Name="Result_Find" Text="Найдено" TextColor="#AFEEEE" FontSize="30" FontAttributes="Bold" BackgroundColor="Black" Grid.Column="1" Grid.Row="0" HorizontalOptions="EndAndExpand" VerticalOptions="CenterAndExpand"></Label>
+                </Grid>
+            </Frame>
+            <ScrollView x:Name="Scroll_Dialogs" Orientation="Vertical">
+                <StackLayout Orientation="Vertical" x:Name="Scroll_Layout_Dialogs">
+
+                </StackLayout>
+            </ScrollView>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

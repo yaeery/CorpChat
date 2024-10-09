@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="CorpChat.Registration" BackgroundColor="Black"
+             NavigationPage.HasBackButton="False">
+    <ContentPage.Content>
+        <StackLayout>
+            <Label Text="Добро пожаловать в CorpChat"  FontSize="50"  HorizontalOptions="CenterAndExpand" FontAttributes="Bold" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" Margin="0,50,0,0" TextColor="#AFEEEE"></Label>
+            <Entry x:Name="Login_Enter" HorizontalOptions="CenterAndExpand" TextColor="#AFEEEE" Placeholder="Введите логин" MaxLength="16" PlaceholderColor="#008080" HorizontalTextAlignment="Center" FontSize="30"></Entry>
+            <Entry x:Name="Pass_Enter" HorizontalOptions="CenterAndExpand" TextColor="#AFEEEE" Placeholder="Введите пароль" MaxLength="8" IsPassword="True" PlaceholderColor="#008080" HorizontalTextAlignment="Center" FontSize="30" ></Entry>
+            <Button Text="Войти" CornerRadius="20" BorderColor="#AFEEEE" BorderWidth="2" BackgroundColor="Black" Margin="0,30,0,0" TextColor="#AFEEEE" FontSize="30" FontAttributes="Bold" HorizontalOptions="CenterAndExpand" WidthRequest="300" Clicked="Button_Enter_Clicked"></Button>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>
