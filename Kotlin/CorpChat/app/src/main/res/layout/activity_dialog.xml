@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000"
+    tools:context=".Dialog">
+
+    <LinearLayout
+        android:id="@+id/high_panel_on_dialog"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#ff000000"
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageButton
+            android:id="@+id/Escepe_Dialog_Btt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="#00000000"
+            android:contentDescription=""
+            android:onClick="Escape_Dialog_Btt_Click"
+            android:src="@drawable/strela" />
+
+        <TextView
+            android:id="@+id/FIO_Text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="5"
+            android:text="Кондрашов Роман"
+            android:textAlignment="center"
+            android:textColor="@color/PaleTurquoise"
+            android:textSize="30dp" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="#00000000"
+            android:contentDescription=""
+            android:src="@drawable/invis_btt"
+            android:theme="@style/Invis" />
+
+    </LinearLayout>
+
+    <ScrollView
+        android:id="@+id/ScrollView_Messages"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:contentDescription=""
+        android:orientation="vertical"
+        app:layout_constrainedHeight="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/high_panel_on_dialog">
+
+        <LinearLayout
+            android:id="@+id/Layout_in_Scroll_Messages"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/high_panel"></LinearLayout>
+    </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="AlertDialog" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+        <item name="android:titleTextColor">@color/RosyBrown</item>  <!-- основной-->
+        <item name="android:layout_width">wrap_content</item><!-- тональность-->
+        <item name="android:textColor">@color/PaleTurquoise</item>
+        <item name="android:background">@color/black</item>
+        <item name="android:textColorPrimary">@color/PaleTurquoise</item>
+        <item name="borderWidth">200dp</item>
+        <item name="android:height">100dp</item>
+    </style>
+</resources>

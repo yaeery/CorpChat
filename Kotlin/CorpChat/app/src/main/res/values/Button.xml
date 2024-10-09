@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+<style name="Btt" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+    <item name="colorPrimary">@color/PaleTurquoise</item>  <!-- основной-->
+    <item name="colorPrimaryVariant">@color/black</item><!-- тональность-->
+    <item name="colorOnPrimary">@color/RosyBrown</item>
+   <!-- <item name="android:background">@drawable/border</item>-->
+
+</style>
+</resources>
