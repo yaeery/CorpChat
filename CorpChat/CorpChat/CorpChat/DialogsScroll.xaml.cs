@@ -134,6 +134,8 @@ namespace CorpChat
         //////////////////////////////////////////////////////////////////////////////////
         async void Load_Dilog(object sender, EventArgs e)
         {
+            thread.Abort();
+            Listning.Abort();
             ((Button)sender).BackgroundColor = Color.Black;
             dialog = new Dialog(tcpClient_Work, Key_Pair_ID_FIO[Key_Pair_Button_ID[(Button)sender]], Key_Pair_Button_ID[(Button)sender]);
             Dialog_ID_Enter = Key_Pair_Button_ID[(Button)sender];

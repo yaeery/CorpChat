@@ -19,7 +19,7 @@ namespace CorpChat
         public MainPage()
         {
             // thread2 = new Thread(New_Page);
-            IP = "192.168.0.107";
+            IP = "192.168.1.4";
             InitializeComponent();
             // Thread thread = new Thread(Animate);
 

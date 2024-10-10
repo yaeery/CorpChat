@@ -22,7 +22,7 @@ namespace CorpChat
         public TcpClient tcpClient_Work;
         public TcpClient tcpClient_Connection;
         public List<string> Messages;
-        public Thread thread;
+        public Thread Listning_thread;
         public string FIO;
         public string ID;
         public int Count_of_Message;
@@ -38,49 +38,20 @@ namespace CorpChat
             Messages = new List<string>();
             this.ID = ID;
             this.FIO = FIO;
-            thread = new Thread(Load_Message);
-            thread.Start();
+            Listning_thread = new Thread(Listning_Method);
+            Listning_thread.Start();
             this.tcpClient_Work = tcpClient;
             InitializeComponent();
             _Stack_Layout = Stack_Layout;
             _Scroll_Hystory_Message = Scroll_Hystory_Message;
             FIO_Dialog.Text = FIO;
             List_Size_Of_Framse = new List<float>();
+            Load_Message();
         }
-        //void Decoding_String_to_List(string Input)
-        //{
-        //    string Prom = "";
-        //    for (int j = 0; j < Input.Length; j++)
-        //    {
-        //        if (Input[j] == '#')
-        //        {
-        //            Messages.Add(Prom);
-        //            Prom = "";
-        //            continue;
-        //        }
-        //        else
-        //        {
-        //            Prom += Input[j];
-        //        }
-        //    }
-        //    Messages.Add(Prom);
-        //}
-       async public void Create_Dialog(int End,bool Is_new)
+       async public void Create_Dialog(bool Is_new)
         {
             double Size_Of_Framse = 0;
-            int Start_for = 0;
-            int End_for = 0;
-            if(Is_new==false)
-            {
-                Start_for = 0;
-                End_for = End;
-            }
-            else
-            {
-                Start_for = End;
-                End_for = Messages.Count;
-            }
-            for (int i = Start_for; i < End_for; i+=3)
+            for (int i = 0; i < Messages.Count; i+=3)
             {
                 Grid grid = new Grid
                 {
@@ -138,16 +109,30 @@ namespace CorpChat
                 Grid.SetColumnSpan(Msg, 2);
                 grid.Children.Add(Date,1, 1);
                 frame.Content = grid;
-                Stack_Layout.Children.Insert(i/3,frame);
-                Size_Of_Framse += frame.Height;
+                if(Is_new==true)
+                {
+                    Stack_Layout.Children.Add(frame);
+                }
+                else
+                {
+                    Stack_Layout.Children.Insert(i / 3, frame);
+                }
+               Size_Of_Framse += frame.Height;
             }
-            if (Count_of_Message == 0)
+            if (Is_new == true)
             {
-                await Scroll_Hystory_Message.ScrollToAsync(0, Stack_Layout.Children.Count * 300, false);
+                await Scroll_Hystory_Message.ScrollToAsync(0, Stack_Layout.Height, false);
             }
             else
             {
-                await Scroll_Hystory_Message.ScrollToAsync(0, Size_Of_Framse, false);
+                if (Count_of_Message != 0)
+                {
+                    await Scroll_Hystory_Message.ScrollToAsync(0, Size_Of_Framse + (Stack_Layout.Children[Stack_Layout.Children.Count-1].Height + Stack_Layout.Children[Stack_Layout.Children.Count - 2].Height), false);
+                }
+                else
+                {
+                    await Scroll_Hystory_Message.ScrollToAsync(0, Size_Of_Framse, false);
+                }
             }
         }
         public void Load_Message()
@@ -158,58 +143,19 @@ namespace CorpChat
                 string Send_String = JsonSerializer.Serialize(jsonClassToServer);
                 DialogsScroll.Is_No_Listen = true;
                 NetworkStream networkStream = tcpClient_Work.GetStream();
-                byte[] bytes = Encoding.UTF8.GetBytes(Send_String);//(Login.Text + "#" + Password.Text);
+                byte[] bytes = Encoding.UTF8.GetBytes(Send_String);
                 networkStream.Write(bytes, 0, bytes.Length);
-                networkStream.Flush();
-                while (true)
-                {
-                    if (tcpClient_Work.Available > 0)
-                    {
-                        byte[] _bytes = new byte[32000];
-                        NetworkStream networkStream1 = tcpClient_Work.GetStream();
-                        int size = networkStream1.Read(_bytes, 0, _bytes.Length);
-                        string x = Encoding.UTF8.GetString(_bytes, 0, size);
-                        jsonClassToClient = JsonSerializer.Deserialize<JsonClassToClient>(Encoding.UTF8.GetString(_bytes, 0, size));
-                        if ((jsonClassToClient.Message_Hystory_List==null) ||(jsonClassToClient.Message_Hystory_List.Count < 1))
-                        {
-                            All_Message = true;
-                            break;
-                        }
-                        else
-                        {
-                            // Preferences.Set(ID, Msg); поправить !!!!!!!!!!!!!!
-                            //Decoding_String_to_List(Msg);
-                            //foreach (var i in jsonClassToClient.Message_Hystory_List)
-                            //{
-                            //    Messages.Add(i);
-                            //}
-                            for (int i = 0; i < jsonClassToClient.Message_Hystory_List.Count; i+=3)
-                            {
-                                Messages.Insert(0, jsonClassToClient.Message_Hystory_List[i]);
-                                Messages.Insert(1, jsonClassToClient.Message_Hystory_List[i+1]);
-                                Messages.Insert(2, jsonClassToClient.Message_Hystory_List[i+2]);
-                            }
-                            int Count_Msg_For_Build = jsonClassToClient.Message_Hystory_List.Count;
-                            Device.BeginInvokeOnMainThread(() =>
-                            {
-                                Create_Dialog(Count_Msg_For_Build,false);
-                            });
-                            jsonClassToClient.Clear();
-                            break;
-                        }
-                        networkStream1.Flush();
-                    }
-                }
+                //networkStream.Flush();
             }
-            catch(Exception E)
+            catch (Exception E)
             {
                 string x = E.Message.ToString();
-                if(!((Preferences.Get(ID, "") == "") || (Preferences.Get(ID, "") == null)))
+                if (!((Preferences.Get(ID, "") == "") || (Preferences.Get(ID, "") == null)))
                 {
                     //Decoding_String_to_List(Preferences.Get(ID, "")); поправить через Json
                     Device.BeginInvokeOnMainThread(() =>
                     {
-                       // Create_Dialog(0);
+                        // Create_Dialog(0);
                     });
                 }
             }
@@ -217,6 +163,7 @@ namespace CorpChat
 
         async private void Return_Button_Clicked(object sender, EventArgs e)
         {
+            Listning_thread.Abort();
             DialogsScroll.Dialog_ID_Enter = "";
             await Navigation.PopModalAsync();
         }
@@ -227,6 +174,73 @@ namespace CorpChat
             Sending.Start();
         }
 
+        void Listning_Method()
+        {
+            while (true)
+            {
+                try 
+                {
+                    if (tcpClient_Work.Available > 0)
+                    {
+                        byte[] _bytes = new byte[32000];
+                        NetworkStream networkStream1 = tcpClient_Work.GetStream();
+                        int size = networkStream1.Read(_bytes, 0, _bytes.Length);
+                        string x = Encoding.UTF8.GetString(_bytes, 0, size);
+                        jsonClassToClient = JsonSerializer.Deserialize<JsonClassToClient>(Encoding.UTF8.GetString(_bytes, 0, size));
+                        networkStream1.Flush();
+                        if (jsonClassToClient.Instraction == "GH")
+                        {
+                            if ((jsonClassToClient.Message_Hystory_List == null) || (jsonClassToClient.Message_Hystory_List.Count < 1))
+                            {
+                                All_Message = true;
+                            }
+                            else
+                            {
+                                Messages.Clear();
+                                // Preferences.Set(ID, Msg); поправить !!!!!!!!!!!!!!
+                                for (int i = 0; i < jsonClassToClient.Message_Hystory_List.Count; i += 3)
+                                {
+                                    Messages.Insert(0, jsonClassToClient.Message_Hystory_List[i]);
+                                    Messages.Insert(1, jsonClassToClient.Message_Hystory_List[i + 1]);
+                                    Messages.Insert(2, jsonClassToClient.Message_Hystory_List[i + 2]);
+                                }
+                                int Count_Msg_For_Build = jsonClassToClient.Message_Hystory_List.Count;
+                                Device.BeginInvokeOnMainThread(() =>
+                                {
+                                    Create_Dialog(false);
+                                });
+                                jsonClassToClient.Clear();
+
+                            }
+                        }
+                        else if (jsonClassToClient.Instraction == "SM/S")
+                        {
+                            if ((jsonClassToClient.Message_Hystory_List == null) || (jsonClassToClient.Message_Hystory_List.Count < 1))
+                            {
+                                DisplayAlert("Ошибка", "Попробуйте позже", "Ок");
+                            }
+                            else
+                            {
+                                //Preferences.Set(ID, Preferences.Get(ID, "") + "#F#" + DateTime.Now.ToString("") + "#" + Message_Entry.Text.ToString());
+                                Messages.Clear();
+                                foreach (var i in jsonClassToClient.Message_Hystory_List)
+                                {
+                                    Messages.Add(i);
+                                }
+                                jsonClassToClient.Clear();
+                                Device.BeginInvokeOnMainThread(() =>
+                                {
+                                    Create_Dialog(true);
+                                });
+                            }
+                        }
+                    }
+                }
+                catch
+                { }
+
+            }
+        }
         void Sending_Msg()
         {
             if((Message_Entry.Text!=null)||(Message_Entry.Text!=""))
@@ -240,36 +254,6 @@ namespace CorpChat
                     byte[] bytes = Encoding.UTF8.GetBytes(Send_String);//(Login.Text + "#" + Password.Text);
                     networkStream.Write(bytes, 0, bytes.Length);
                     networkStream.Flush();
-                    while (true)
-                    {
-                        if (tcpClient_Work.Available > 0)
-                        {
-                            byte[] _bytes = new byte[32000];
-                            NetworkStream networkStream1 = tcpClient_Work.GetStream();
-                            int size = networkStream1.Read(_bytes, 0, _bytes.Length);
-                            jsonClassToClient = JsonSerializer.Deserialize<JsonClassToClient>(Encoding.UTF8.GetString(_bytes, 0, size));
-                            if ((jsonClassToClient.Message_Hystory_List == null) || (jsonClassToClient.Message_Hystory_List.Count < 1))
-                            {
-                                DisplayAlert("Ошибка", "Попробуйте позже", "Ок");
-                                break;
-                            }
-                            else
-                            {
-                                //Preferences.Set(ID, Preferences.Get(ID, "") + "#F#" + DateTime.Now.ToString("") + "#" + Message_Entry.Text.ToString());
-                                foreach (var i in jsonClassToClient.Message_Hystory_List)
-                                {
-                                    Messages.Add(i);
-                                }
-                                jsonClassToClient.Clear();
-                                Device.BeginInvokeOnMainThread(() =>
-                                {
-                                    Create_Dialog(Messages.Count-3, true);
-                                });
-                                break;
-                            }
-                            networkStream1.Flush();
-                        }
-                    }
                 }
                 catch
                 {
